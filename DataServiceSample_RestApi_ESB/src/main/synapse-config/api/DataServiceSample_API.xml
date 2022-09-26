@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api context="/service" name="DataServiceSample_API" xmlns="http://ws.apache.org/ns/synapse">
+    <resource methods="POST" uri-template="/add">
+        <inSequence>
+            <property expression="json-eval($.ID)" name="EMP_ID" scope="default" type="STRING"/>
+            <property expression="json-eval($.NAME)" name="EMP_NAME" scope="default" type="STRING"/>
+            <property expression="json-eval($.DEPT)" name="EMP_DEPT" scope="default" type="STRING"/>
+            <log>
+                <property name="Before_Endpoint" value="Before_Endpoint"/>
+                <property expression="get-property('EMP_ID')" name="EMP_ID"/>
+                <property expression="get-property('EMP_NAME')" name="EMP_NAME"/>
+                <property expression="get-property('EMP_DEPT')" name="EMP_DEPT"/>
+            </log>
+            <payloadFactory media-type="json">
+                <format>
+					{&#xd;
+					"_postinsert":&#xd;
+					{&#xd;
+					"ID":$1,&#xd;
+					"NAME":"$2",&#xd;
+					"DEPT":"$3"&#xd;
+					}&#xd;
+					}
+				</format>
+                <args>
+                    <arg evaluator="xml" expression="get-property('EMP_ID')"/>
+                    <arg evaluator="xml" expression="get-property('EMP_NAME')"/>
+                    <arg evaluator="xml" expression="get-property('EMP_DEPT')"/>
+                </args>
+            </payloadFactory>
+            <call>
+                <endpoint key="Insert_EP"/>
+            </call>
+            <log>
+                <property name="After_Endpoint" value="After_Endpoint"/>
+                <property expression="get-property('EMP_ID')" name="Res_ID"/>
+                <property expression="get-property('EMP_NAME')" name="Res_NAME"/>
+                <property expression="get-property('EMP_DEPT')" name="Res_DEPT"/>
+            </log>
+            <property expression="get-property('axis2','HTTP_SC')" name="DB_StatusCode" scope="default" type="STRING"/>
+            <log>
+                <property expression="get-property('DB_StatusCode')" name="DB_StatusCode_LOG"/>
+            </log>
+            <filter regex="true" source="boolean(get-property('DB_StatusCode'))=200">
+                <then>
+                    <log level="custom">
+                        <property name="+++ Inside Succes Case +++" value="+++ Inside Succes Case +++"/>
+                    </log>
+                    <payloadFactory media-type="json">
+                        <format>
+							{&#xd;
+							"Message":" Insert Successfull with ID : "$1
+						</format>
+                        <args>
+                            <arg evaluator="xml" expression="get-property('EMP_ID')"/>
+                        </args>
+                    </payloadFactory>
+                </then>
+                <else>
+                    <log level="custom">
+                        <property name="+++ Inside Succes Case +++" value="+++ Inside Succes Case +++"/>
+                    </log>
+                    <payloadFactory media-type="json">
+                        <format>
+							{&#xd;
+							"Message":" Data Insert Unsuccessfull with ID : "$1
+						</format>
+                        <args>
+                            <arg evaluator="xml" expression="get-property('EMP_ID')"/>
+                        </args>
+                    </payloadFactory>
+                </else>
+            </filter>
+            <respond/>
+        </inSequence>
+        <outSequence/>
+        <faultSequence/>
+    </resource>
+    <resource methods="PUT" uri-template="/update">
+        <inSequence>
+            <property expression="json-eval($.ID)" name="EMP_ID" scope="default" type="STRING"/>
+            <property expression="json-eval($.NAME)" name="EMP_NAME" scope="default" type="STRING"/>
+            <property expression="json-eval($.DEPT)" name="EMP_DEPT" scope="default" type="STRING"/>
+            <log>
+                <property name="Before_Endpoint" value="Before_Endpoint"/>
+                <property expression="get-property('EMP_ID')" name="EMP_ID"/>
+                <property expression="get-property('EMP_NAME')" name="EMP_NAME"/>
+                <property expression="get-property('EMP_DEPT')" name="EMP_DEPT"/>
+            </log>
+            <payloadFactory media-type="json">
+                <format>
+					{&#xd;
+					"_putinsert":&#xd;
+					{&#xd;
+					"ID":$1,&#xd;
+					"NAME":"$2",&#xd;
+					"DEPT":"$3"&#xd;
+					}&#xd;
+					}
+				</format>
+                <args>
+                    <arg evaluator="xml" expression="get-property('EMP_ID')"/>
+                    <arg evaluator="xml" expression="get-property('EMP_NAME')"/>
+                    <arg evaluator="xml" expression="get-property('EMP_DEPT')"/>
+                </args>
+            </payloadFactory>
+            <call>
+                <endpoint key="Update_EP"/>
+            </call>
+            <log>
+                <property name="After_Endpoint" value="After_Endpoint"/>
+                <property expression="get-property('EMP_ID')" name="Res_ID"/>
+                <property expression="get-property('EMP_NAME')" name="Res_NAME"/>
+                <property expression="get-property('EMP_DEPT')" name="Res_DEPT"/>
+            </log>
+            <property expression="get-property('axis2','HTTP_SC')" name="DB_StatusCode" scope="default" type="STRING"/>
+            <log>
+                <property expression="get-property('DB_StatusCode')" name="DB_StatusCode_LOG"/>
+            </log>
+            <filter regex="true" source="boolean(get-property('DB_StatusCode'))=200">
+                <then>
+                    <log level="custom">
+                        <property name="+++ Inside Succes Case +++" value="+++ Inside Succes Case +++"/>
+                    </log>
+                    <payloadFactory media-type="json">
+                        <format>
+							{&#xd;
+							"Message":" Updation Successfull with ID : "$1
+						</format>
+                        <args>
+                            <arg evaluator="xml" expression="get-property('EMP_ID')"/>
+                        </args>
+                    </payloadFactory>
+                </then>
+                <else>
+                    <log level="custom">
+                        <property name="+++ Inside Succes Case +++" value="+++ Inside Succes Case +++"/>
+                    </log>
+                    <payloadFactory media-type="json">
+                        <format>
+							{&#xd;
+							"Message":" Updation Unsuccessfull with ID : "$1
+						</format>
+                        <args>
+                            <arg evaluator="xml" expression="get-property('EMP_ID')"/>
+                        </args>
+                    </payloadFactory>
+                </else>
+            </filter>
+            <respond/>
+        </inSequence>
+        <outSequence/>
+        <faultSequence/>
+    </resource>
+    <resource methods="DELETE" uri-template="/delete">
+        <inSequence>
+            <!-- <log level="custom"> <property name="+++ Inside Failure Case +++" 
+				value="+++ Inside Failure Case +++"/> </log> <payloadFactory media-type="json"> 
+				<format>{&#xd; "Message":" Deletion UN Succesfull with ID : "$1</format> 
+				<args> <arg evaluator="xml" expression="get-property('Request_ID')"/> </args> 
+				</payloadFactory> -->
+            <property expression="json-eval($.ID)" name="Request_ID" scope="default" type="STRING"/>
+            <log>
+                <property expression="json-eval($.ID)" name="Request_ID"/>
+            </log>
+            <payloadFactory media-type="json">
+                <format>
+					{&#xd;
+					"_postdelete":{&#xd;
+					"ID":$1&#xd;
+					}&#xd;
+					}
+				</format>
+                <args>
+                    <arg evaluator="xml" expression="get-property('Request_ID')"/>
+                </args>
+            </payloadFactory>
+            <log>
+                <property name="Before_Endpoint" value="Before_Endpoint"/>
+                <property expression="json-eval($)" name="Inputpayload"/>
+            </log>
+            <call>
+                <endpoint key="Delete_EP"/>
+            </call>
+            <property expression="get-property('axis2','HTTP_SC')" name="DB_StatusCode" scope="default" type="STRING"/>
+            <log>
+                <property expression="get-property('DB_StatusCode')" name="DB_StatusCode_LOG"/>
+            </log>
+            <filter regex="true" source="boolean(get-property('DB_StatusCode'))=202">
+                <then>
+                    <log level="custom">
+                        <property name="+++ Inside Succes Case +++" value="+++ Inside Succes Case +++"/>
+                    </log>
+                    <payloadFactory media-type="json">
+                        <format>
+							{&#xd;
+							"Message":" Deletion Succesfull with ID : "$1
+						</format>
+                        <args>
+                            <arg evaluator="xml" expression="get-property('Request_ID')"/>
+                        </args>
+                    </payloadFactory>
+                </then>
+                <else>
+                    <log level="custom">
+                        <property name="+++ Inside Succes Case +++" value="+++ Inside Succes Case +++"/>
+                    </log>
+                    <payloadFactory media-type="json">
+                        <format>
+							{&#xd;
+							"Message":" Deletion Unsuccessfull with ID : "$1
+						</format>
+                        <args>
+                            <arg evaluator="xml" expression="get-property('Request_ID')"/>
+                        </args>
+                    </payloadFactory>
+                </else>
+            </filter>
+            <respond/>
+        </inSequence>
+        <outSequence/>
+        <faultSequence/>
+    </resource>
+    <resource methods="POST" uri-template="/getdata">
+        <inSequence>
+            <property expression="json-eval($.ID)" name="Request_ID" scope="default" type="STRING"/>
+            <log>
+                <property expression="get-property('Request_ID')" name="Request_ID"/>
+            </log>
+            <payloadFactory media-type="json">
+                <format>
+					{&#xd;
+					"_postselect":{&#xd;
+					"ID":$1&#xd;
+					}&#xd;
+					}
+				</format>
+                <args>
+                    <arg evaluator="xml" expression="get-property('Request_ID')"/>
+                </args>
+            </payloadFactory>
+            <log>
+                <property name="Before_Endpoint" value="Before_Endpoint"/>
+                <property expression="json-eval($)" name="Inputpayload"/>
+            </log>
+            <call>
+                <endpoint key="GetById_EP"/>
+            </call>
+            <log>
+                <property name="After_Endpoint" value="After_Endpoint"/>
+                <property expression="json-eval($)" name="Responsepayload"/>
+            </log>
+            <respond/>
+        </inSequence>
+        <outSequence/>
+        <faultSequence/>
+    </resource>
+</api>
